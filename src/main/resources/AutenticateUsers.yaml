@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: Autenticacion con ID Uruguay 
+  description: Servicio responsable de la autenticación con ID Uruguay
+  termsOfService: http://dominio.com.uy
+  contact:
+    email: xxxx@xxxx.com.uy
+  version: 1.0.0
+servers:
+  - url: https://dominio.com.uy/api/v1
+tags:
+  - name: auth
+    description: Contine las operaciones para llevar adelante la autenticacion.
+    externalDocs:
+      description: Find out more
+      url: https://XXXXXXX.com/wiki/
+
+paths:
+  /organismo/findInfoForCodeRequest:
+    get:
+      tags:
+        - auth
+      summary: Recuperar la informacion para solicitar el code de ID Uruguay. 
+      description: Recuperar la informacion para solicitar el code de ID Uruguay.
+      operationId: getInfoForCodeRequest
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/InfoForCodeRequest'
+        '500':
+          description: Internal Error
+          
+  /organismo/findByInfoUser/{code}:
+    get:
+      tags:
+        - auth
+      summary: Recuperar todas las aplicaciones
+      description: Recupera todas la aplicaciones disponibles en la base.
+      operationId: findByInfoUser
+      parameters:
+        - name: code
+          in: path
+          description: Codigo que se obtuvo en la primera llamada.
+          required: true
+          schema:
+            type: string
+            default: -1
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Usuario'
+        '400':
+          description: Invalid code value
+        '500':
+          description: Internal Server Error
+
+
+# Es la url del IDP, en este caso utilizamos a ID Uruguay
+#urlAutorizacion=
+#response_type=code
+#scope=openid personal_info email
+#client_id=
+#redirect_uri=
+
+components:
+  schemas:
+    InfoForCodeRequest:
+      type: object
+      properties:
+        urlAutorizacion:
+          type: string
+          nullable: false
+        response_type:
+            type: string
+            nullable: false
+        scope:
+            type: string
+            nullable: false
+        client_id: 
+          type: string
+          nullable: false
+        redirect_uri: 
+          type: string
+
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+          nullable: false
+        nombre:
+          type: string
+          nullable: false
+        apellido:
+          type: string
+          nullable: false
+        email:
+          type: string
+          nullable: false
+        fechaAlta:
+          type: string
+          format: date
+          description: Creation date
+          example: "2022-01-30"
+        fechaFin:
+          type: string
+          format: date
+          description: Fin date
+          example: "2022-01-30"
+          nullable: true
+      required:
+        - username
+        - nombre
+        - apellido
+        - email
